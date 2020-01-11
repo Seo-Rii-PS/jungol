@@ -18,6 +18,7 @@ void upd(int p) {
 }
 
 int findl(int p, int s) {
+    if(p==1) return -1;
     p += n2 - 2;
     while (1) {
         if (v[p] > s) break;
@@ -37,6 +38,7 @@ int findl(int p, int s) {
 }
 
 int findr(int p, int s) {
+    if(p==n) return -1;
     p += n2;
     while (1) {
         if (v[p] > s) break;
@@ -60,6 +62,9 @@ int main() {
     while (n2 < n) n2 *= 2;
     n2 *= 2;
     v.resize(n2 * 2 + 1);
+    for (int i = n2 * 2; i > 0; --i) {
+        v[i] = -2100000000;
+    }
     for (int i = n2; i < n2 + n; ++i) {
         scanf("%d", &v[i]);
     }
