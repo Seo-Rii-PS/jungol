@@ -10,7 +10,7 @@ const int arrSize = 32768;
 
 unsigned char byteArr[arrSize];
 unsigned char *ptr = byteArr;
-int pairSet[arrSize];
+int pairSet[128001];
 string str;
 stack<int> stk;
 
@@ -21,7 +21,6 @@ int main() {
         if (t == 10 || t == 13) ign = false;
         if (t == '%') ign = true;
         if (ign) continue;
-        if (t == '`') break;
         if (t == '[') stk.push(str.length());
         if (t == ']') {
             if (stk.empty()) {
@@ -49,8 +48,14 @@ int main() {
             --ptr;
             if (ptr < byteArr) ptr = byteArr + arrSize - 1;
         }
-        if (t == '+') ++(*ptr);
-        if (t == '-') --(*ptr);
+        if (t == '+') {
+            if (*ptr == UCHAR_MAX) *ptr = 0;
+            else ++(*ptr);
+        }
+        if (t == '-') {
+            if (*ptr == 0) *ptr = UCHAR_MAX;
+            else --(*ptr);
+        }
         if (t == '.') printf("%c", (char) (*ptr));
         if (t == '[' || t == ']') {
             if ((*ptr != 0) ^ (t == ']')) continue;
