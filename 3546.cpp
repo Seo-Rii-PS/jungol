@@ -53,9 +53,9 @@ int main() {
         }
     }
     cnt += box.size();
-    fflush(stdin);
-    while (true) {
-        scanf("%c", &t);
+    string str;
+    cin >> str;
+    for (auto t:str) {
         if (t == 10 || t == 13) break;
         if (t == 'U') moveCharacter(make_pair(-1, 0));
         if (t == 'D') moveCharacter(make_pair(1, 0));
