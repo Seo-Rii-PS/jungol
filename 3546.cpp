@@ -61,6 +61,7 @@ int main() {
         if (t == 'D') moveCharacter(make_pair(1, 0));
         if (t == 'L') moveCharacter(make_pair(0, -1));
         if (t == 'R') moveCharacter(make_pair(0, 1));
+        if (cnt == 0) break;
     }
     if (cnt) printf("incomplete\n");
     else printf("complete\n");
