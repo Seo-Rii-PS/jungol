@@ -24,50 +24,92 @@ struct node {
 };
 
 node *createNode(node *l, node *r) {
-    return new node(l->val || r->val, l, r);
+    if (l == nullptr) return new node(r->val, l, r);
+    if (r == nullptr) return new node(l->val, l, r);
+    return new node(l->val + r->val, l, r);
 }
 
 node *createNode(int v) {
     return new node(v);
 }
 
-vector<int> d;
+int n, h, q, n2 = 1;
+vector<int> v;
 vector<node *> root;
-int n, n2 = 1, q;
+unordered_map<int, int> his;
+vector<int> db;
+
+int gHeight(int s) {
+    return 32 - __builtin_clz(s);
+}
+
+node *createTree(int tar, node *laTree, int nh = 0) {
+    if (laTree == nullptr) return nullptr;
+    if (nh == h) return createNode((laTree->val) + 1);
+    node *nl = laTree->l, *nr = laTree->r;
+    if (tar & (1 << (h - nh - 1))) nr = createTree(tar, laTree->r, nh + 1);
+    else nl = createTree(tar, laTree->l, nh + 1);
+    return createNode(nl, nr);
+}
+
+void updTree(int tar, node *tree, int nh = 0) {
+    if (nh == h) {
+        tree->val = tree->val + 1;
+        return;
+    }
+    if (tar & (1 << (h - nh - 1))) updTree(tar, tree->r, nh + 1);
+    else updTree(tar, tree->l, nh + 1);
+    tree->val = (tree->l->val) + (tree->r->val);
+}
+
+int queryTree(int l, int r, node *tree, int tl = 0, int tr = n2) {
+    // 1<<(h-nh-1)
+    if (tr < l) return 0;
+    if (r < tl) return 0;
+    if (l <= tl && r >= tr) return tree->val;
+    return queryTree(l, r, tree->l, tl, (tl + tr) / 2) + queryTree(l, r, tree->r, (tl + tr) / 2 + 1, tr);
+}
 
 int main() {
-    vector<node *> v, nv;
-    vector<vector<node*>> nowTree;
-    vector<bool> up, nup;
-    int t, ma=0, ci=0, cj=0;
     scanf("%d %d", &n, &q);
-    while (n2 < n) n2 <<= 1;
-    n2 <<= 1;
-    d.resize(n + 1);
-    for (int i = 0; i < n; ++i) {
-        scanf("%d", &d[i]);
-        ma=max(d[i], ma);
+    int tn = n - 1;
+    while (tn) {
+        tn >>= 1;
+        ++h;
     }
-    nowTree.resize(1);
+    while (n > n2) n2 <<= 1;
+    --n2;
+    v.resize(n);
+    db.resize(n + 1);
     for (int i = 0; i < n; ++i) {
-        node* tNode;
-        if (d[i] == 1) tNode=createNode(1);
-        else tNode=createNode(0);
-        v.push_back(tNode);
-        nowTree[0].push_back(tNode);
+        scanf("%d", &v[i]);
+        if (his[v[i]]) db[his[v[i]] - 1] = i;
+        his[v[i]] = i + 1;
     }
-    while (v.size() > 1) {
-        nowTree.push_back(vector<node*>());
-        ++ci;
-        nv = v;
-        v.clear();
-        for (int i = 0; i < nv.size(); i += 2) {
-            auto tNode=createNode(nv[i], nv[i + 1]);
-            v.push_back(tNode);
-            nowTree[ci].push_back(tNode);
+    vector<node *> tv, nv;
+    for (int i = 0; i < n; ++i) nv.push_back(createNode((i) && (i == db[0])));
+    while (nv.size() > 1) {
+        tv = nv;
+        nv.clear();
+        for (int i = 0; i < tv.size() / 2 * 2; i += 2) nv.push_back(createNode(tv[i], tv[i + 1]));
+        if (tv.size() % 2) nv.push_back(createNode(tv.back(), nullptr));
+    }
+    root.push_back(nv[0]);
+    for (int i = 1; i <= n; ++i) {
+        if (db[i] == 0) {
+            root.push_back(root.back());
+            continue;
         }
-        if (nv.size() % 2 == 1) v.push_back(nv[nv.size() - 1]);
+        root.push_back(createTree(db[i], root.back()));
     }
-    root.push_back(v[0]);
-
+    for (int i = 0; i < q; ++i) {
+        int a, b;
+        scanf("%d %d", &a, &b);
+        --a;
+        --b;
+        if (!a) {
+            if (!b)printf("%d\n", (b - a + 1));
+            else printf("%d\n", (b - a + 1) - (queryTree(a, b, root[b])));
+        } else printf("%d\n", (b - a + 1) - (queryTree(a, b, root[b]) - queryTree(a, b, root[a - 1])));
+    }
 }
