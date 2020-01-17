@@ -36,12 +36,8 @@ node *createNode(int v) {
 int n, h, q, n2 = 1;
 vector<int> v;
 vector<node *> root;
-unordered_map<int, int> his;
+vector<int> his;
 vector<int> db;
-
-int gHeight(int s) {
-    return 32 - __builtin_clz(s);
-}
 
 node *createTree(int tar, node *laTree, int nh = 0) {
     if (laTree == nullptr) return nullptr;
@@ -80,6 +76,7 @@ int main() {
     while (n > n2) n2 <<= 1;
     --n2;
     v.resize(n);
+    his.resize(n + 2);
     db.resize(n + 1);
     for (int i = 0; i < n; ++i) {
         scanf("%d", &v[i]);
