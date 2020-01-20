@@ -72,7 +72,7 @@ int main() {
         if (his[t]) db[his[t] - 1] = i;
         his[t] = i + 1;
     }
-    tar = db[0]-1;
+    tar = db[0] - 1;
     root[0] = createFirstTree();
     for (int i = 1; i <= n; ++i) {
         if (db[i] == 0) {
