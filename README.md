@@ -10,6 +10,7 @@ Solved code for JUNGOL(www.jungol.co.kr)
 3546
 3583
 3435
+3588
 
 ## Solving
 1281
